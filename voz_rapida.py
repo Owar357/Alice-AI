@@ -12,7 +12,9 @@ import queue
 import re
 import subprocess
 import threading
+import time
 
+import numpy as np
 import sounddevice as sd
 import soundfile as sf
 
@@ -44,7 +46,12 @@ def _indice_cable():
     return None
 
 
-def hablar(texto, piper_exe, voz_modelo, archivo_salida, idle_hablando=None, idle_reposo=None):
+def hablar(texto, piper_exe, voz_modelo, archivo_salida, idle_hablando=None, idle_reposo=None, velocidad=1.0,
+           gesto_especial=None, repetir_gesto_cada=None):
+    """gesto_especial: animación especial (ej. "Hello") que se dispara justo cuando
+    empieza a sonar la voz, no antes. repetir_gesto_cada: cada cuántos segundos se
+    vuelve a mandar idle_hablando mientras habla, para animaciones que no se
+    repiten solas en Animaze (None = solo una vez)."""
     trozos = partir_en_frases(texto)
     if not trozos:
         return
@@ -59,7 +66,8 @@ def hablar(texto, piper_exe, voz_modelo, archivo_salida, idle_hablando=None, idl
                 except FileNotFoundError:
                     pass
                 subprocess.run(
-                    [piper_exe, "--model", voz_modelo, "--output_file", archivo_salida],
+                    [piper_exe, "--model", voz_modelo, "--output_file", archivo_salida,
+                     "--length_scale", str(velocidad)],
                     input=trozo.encode("utf-8"),
                     capture_output=True,
                 )
@@ -79,18 +87,50 @@ def hablar(texto, piper_exe, voz_modelo, archivo_salida, idle_hablando=None, idl
     if indice_cable is None:
         print("Advertencia: No se encontró 'CABLE Input'. Reproduciendo en salida por defecto.")
 
-    gesto_puesto = False
+    # Se abre UNA sola salida de audio para toda la respuesta (antes se abría una
+    # por frase, y eso metía retraso al empezar y cortecitos entre frases).
+    stream = None
+    segundos_desde_gesto = 0.0
+    espera_total = 0.0
     try:
         while True:
+            inicio_espera = time.perf_counter()
             item = cola.get()
+            if stream is not None:
+                # Si hubo que esperar a Piper con la voz ya sonando, se oye un hueco.
+                espera_total += time.perf_counter() - inicio_espera
             if item is None:
                 break
             data, samplerate = item
-            if not gesto_puesto:
+            data = np.asarray(data, dtype="float32")
+            if data.ndim == 1:
+                data = data.reshape(-1, 1)
+
+            if stream is None:
+                stream = sd.OutputStream(samplerate=samplerate, channels=data.shape[1],
+                                         dtype="float32", device=indice_cable)
+                stream.start()
+                # Los gestos se mandan ahora, con el audio ya listo para sonar.
+                if gesto_especial is not None:
+                    animaze_gestos.accion_especial(gesto_especial)
                 animaze_gestos.idle(idle_hablando)
-                gesto_puesto = True
-            sd.play(data, samplerate, device=indice_cable)
-            sd.wait()
+
+            # Se escribe en pedazos de medio segundo para poder refrescar el gesto
+            # en medio de una frase larga.
+            pedazo = int(samplerate * 0.5)
+            for i in range(0, len(data), pedazo):
+                if repetir_gesto_cada and segundos_desde_gesto >= repetir_gesto_cada:
+                    animaze_gestos.idle(idle_hablando)
+                    segundos_desde_gesto = 0.0
+                bloque = data[i:i + pedazo]
+                stream.write(bloque)
+                segundos_desde_gesto += len(bloque) / samplerate
     finally:
+        if stream is not None:
+            stream.stop()   # espera a que termine de sonar lo que queda en el búfer
+            stream.close()
         animaze_gestos.idle(idle_reposo)
         hilo.join(timeout=30)
+    if espera_total > 0.5:
+        print(f"(Aviso: la voz se quedó esperando a Piper {espera_total:.1f} s en total; "
+              "la PC va justa de CPU mientras habla.)")

@@ -5,19 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c43e33f8-abd2-4ee2-97d7-8a34d99057ab" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/Pruebas OpenHouse.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/alice_backend_php_laravel.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/alice_voz.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/buscar_conocimiento.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cargar_conocimiento.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/chat_ollama.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/conocimiento/faq_prueba.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/escuchar.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/alice_backend_php_laravel.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/alice_voz.py" beforeDir="false" afterPath="$PROJECT_DIR$/alice_voz.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/buscar_conocimiento.py" beforeDir="false" afterPath="$PROJECT_DIR$/buscar_conocimiento.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cargar_conocimiento.py" beforeDir="false" afterPath="$PROJECT_DIR$/cargar_conocimiento.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/conocimiento/faq_prueba.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/voz_rapida.py" beforeDir="false" afterPath="$PROJECT_DIR$/voz_rapida.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -48,6 +42,7 @@
     &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
     &quot;Python.alice_voz.executor&quot;: &quot;Run&quot;,
     &quot;Python.animaze_gestos.executor&quot;: &quot;Run&quot;,
+    &quot;Python.embeddings.executor&quot;: &quot;Run&quot;,
     &quot;Python.gestos_teclas.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,

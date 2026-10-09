@@ -1,7 +1,7 @@
-   .venv/
-   __pycache__/
-   *.pyc
-   chroma_db/
-   respuesta.wav
-   piper/
-   piper.zip
+.venv/
+__pycache__/
+*.pyc
+chroma_db/
+respuesta.wav
+piper/
+piper.zip
